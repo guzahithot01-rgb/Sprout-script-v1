@@ -1,4 +1,5 @@
--- [[ 🍓 sprout script [ PERFECT SPEED FIX ] 🍓 ]]
+
+-- [[ 🍓 sprout script [ THE ULTIMATE UPDATE ] 🍓 ]]
 
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
@@ -58,7 +59,7 @@ ContentFrame.Parent = MainFrame
 ContentFrame.BackgroundTransparency = 1
 ContentFrame.Position = UDim2.new(0, 5, 0, 45)
 ContentFrame.Size = UDim2.new(1, -10, 1, -55)
-ContentFrame.CanvasSize = UDim2.new(0, 0, 0, 650)
+ContentFrame.CanvasSize = UDim2.new(0, 0, 0, 1100) -- Increased Canvas for more buttons
 ContentFrame.ScrollBarThickness = 3
 UIListLayout.Parent = ContentFrame
 UIListLayout.Padding = UDim.new(0, 8)
@@ -90,13 +91,12 @@ Bar.Parent = SliderFrame
 
 local Dot = Instance.new("TextButton")
 Dot.Size = UDim2.new(0, 14, 0, 14)
-Dot.Position = UDim2.new(0.25, -7, -1.2, 0) -- Default for 50
+Dot.Position = UDim2.new(0.25, -7, -1.2, 0)
 Dot.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
 Dot.Text = ""
 Dot.Parent = Bar
 Instance.new("UICorner", Dot).CornerRadius = UDim.new(1, 0)
 
--- The Round Toggle Button
 local SpeedToggle = Instance.new("Frame")
 SpeedToggle.Size = UDim2.new(0, 50, 0, 50)
 SpeedToggle.Position = UDim2.new(0, 10, 0.5, 0)
@@ -117,17 +117,13 @@ SBtn.Parent = SpeedToggle
 SBtn.MouseButton1Click:Connect(function()
     isSpeedEnabled = not isSpeedEnabled
     if isSpeedEnabled then
-        SpeedToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 127) -- Green
+        SpeedToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
     else
-        SpeedToggle.BackgroundColor3 = Color3.fromRGB(255, 105, 180) -- Pink
-        -- Reset speed to normal immediately when OFF
-        pcall(function()
-            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
-        end)
+        SpeedToggle.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+        pcall(function() game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16 end)
     end
 end)
 
--- Slider & Speed Loop (Smooth Update)
 local dragging = false
 Dot.MouseButton1Down:Connect(function() dragging = true end)
 game:GetService("UserInputService").InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then dragging = false end end)
@@ -140,16 +136,13 @@ game:GetService("RunService").RenderStepped:Connect(function()
         currentSpeedValue = math.floor(relative * 200)
         SliderLabel.Text = "Speed: " .. currentSpeedValue
     end
-    -- Constant Check
     pcall(function()
         local hum = game.Players.LocalPlayer.Character.Humanoid
-        if isSpeedEnabled then
-            hum.WalkSpeed = currentSpeedValue
-        end
+        if isSpeedEnabled then hum.WalkSpeed = currentSpeedValue end
     end)
 end)
 
--- [[ Feature Button with English Tutorial ]]
+-- [[ Feature Function ]]
 local function CreateFeature(name, tutorialText, callback)
     local Container = Instance.new("Frame")
     Container.Size = UDim2.new(1, 0, 0, 35)
@@ -202,7 +195,7 @@ local function CreateFeature(name, tutorialText, callback)
     MainBtn.MouseButton1Click:Connect(callback)
 end
 
--- Features
+-- [[ Original Features ]]
 CreateFeature("speed", "How to use 'speed':\nAdjust the speed to whatever you want and press use it", function()
     SpeedToggle.Visible = not SpeedToggle.Visible
 end)
@@ -219,6 +212,25 @@ CreateFeature("Tp to generator", "How to use 'Tp to generator':\nClick it and it
     end)
 end)
 
+-- [[ NEW REQUESTED FEATURES ]]
+
+CreateFeature("Noob killer", "How to use 'Noob killer':\nClick it, and noob will kill you", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Dandy's-World-ALPHA-Twisted-Noob-127837"))()
+end)
+
+CreateFeature("gobbydwscript", "How to use 'gobbydwscript':\nClick it, and it will have tap for setting you can use it for fly,speedhack,noclip and others!", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Dandy's-World-ALPHA-G0bbyD0llan-DW-Reupload-34146"))()
+end)
+
+CreateFeature("angel script", "How to use 'angel script':\nClick it, and it will show tap that have tp,speedhack,esp and others!", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Dandy's-World-ALPHA-Angel-Core-115426"))()
+end)
+
+CreateFeature("boxten s#x gui", "How to use 'boxten s#x gui'\nClick it, and it will loading tap That have autofarm,walktp, autoskillcheck this script is so good", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Dandy's-World-ALPHA-Dandys-World-50352"))()
+end)
+
+-- [[ Extra Features ]]
 CreateFeature("Autofarm and skillcheck", "How to use 'Autofarm and skillcheck':\nClick it, and it will do auto skillcheck and click 'start' for autofarm click 'stop' when you need to stop it", function()
     loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/49070d904c420087ca216a958ed26cca.lua"))()
 end)
@@ -227,11 +239,7 @@ CreateFeature("noclip and esp", "How to use 'noclip and esp':\nClick it, and it 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EarthC123/FjoneScript/refs/heads/main/myscript.lua"))()
 end)
 
-CreateFeature("float", "How to use 'float':\nClick it, and it will show float you can open and off it for normal twisted with main twisted use 10, for pebble twisted and dandy twisted use 13, for dyle use 17.", function()
-    loadstring(game:HttpGet("https://gist.githubusercontent.com/shigaraki-svg/6a037ac5d9a6386ccfc9871c18b757af/raw/05715144621af9d2249c8b6a883f12872eeebcbc/Float"))()
-end)
-
--- Resize handle
+-- Resize, Minimize, Close logic
 local ResizeBtn = Instance.new("TextButton")
 ResizeBtn.Parent = MainFrame
 ResizeBtn.Size = UDim2.new(0, 20, 0, 20)
@@ -244,7 +252,6 @@ Instance.new("UICorner", ResizeBtn).CornerRadius = UDim.new(0, 5)
 local resizing = false
 ResizeBtn.MouseButton1Down:Connect(function() resizing = true end)
 game:GetService("UserInputService").InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then resizing = false end end)
-
 game:GetService("RunService").RenderStepped:Connect(function()
     if resizing then
         local mPos = game:GetService("UserInputService"):GetMouseLocation()
@@ -253,7 +260,6 @@ game:GetService("RunService").RenderStepped:Connect(function()
     end
 end)
 
--- Minimize/Close
 local minimized = false
 MiniBtn.MouseButton1Click:Connect(function()
     minimized = not minimized
