@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍓 Sprout Script | The Ultimate Update</title>
+    <style>
+        /* โทนสีตาม UI ใน Roblox ของนาย (Pink Style) */
+        :root {
+            --primary: #ff69b4; /* สีชมพู Title */
+            --bg-dark: #121212;
+            --card-bg: #1e1e1e;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: var(--bg-dark); 
+            color: white; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0;
+        }
+
+        .container {
+            width: 85%;
+            max-width: 450px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .header h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 26px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .version {
+            font-size: 12px;
+            color: #ffc0cb;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .script-box {
+            background: #000;
+            color: #00ff88;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            text-align: left;
+            word-break: break-all;
+            border: 1px solid #333;
+            margin-bottom: 25px;
+        }
+
+        .btn-copy {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+        }
+
+        .btn-copy:active {
+            transform: scale(0.95);
+        }
+
+        .footer-text {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🍓 SPROUT SCRIPT</h1>
+        <span class="version">[ THE ULTIMATE UPDATE ]</span>
+    </div>
+
+    <div class="script-box" id="loadstring">
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/guzahithot01-rgb/Sprout-script-v1/refs/heads/main/main.lua"))()
+    </div>
+
+    <button class="btn-copy" onclick="copyContent()">COPY SCRIPT</button>
+
+    <div class="footer-text">
+        Created by guzahithot01-rgb
+    </div>
+</div>
+
+<script>
+    function copyContent() {
+        const text = document.getElementById('loadstring').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert("คัดลอกแล้ว! 🍓\nอย่าลืมกดรันใน Executor นะครับ");
+        });
+    }
+</script>
+
+</body>
+</html>
