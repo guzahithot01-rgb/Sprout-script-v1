@@ -1,90 +1,50 @@
--- [[ 🍓 GEMINI SPROUT V4: THE FINAL MASTER 🍓 ]] --
+-- [[ 🍓 GEMINI SPROUT V4: NO-KEY EDITION 🍓 ]] --
 local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 
--- ลบของเก่าออกก่อนรันใหม่
 if CoreGui:FindFirstChild("GeminiSproutV4") then CoreGui.GeminiSproutV4:Destroy() end
 
 local GeminiGui = Instance.new("ScreenGui", CoreGui)
 GeminiGui.Name = "GeminiSproutV4"
 GeminiGui.ResetOnSpawn = false
 
--- [[ 💾 LOCAL STORAGE: บังคับให้ถาม Key ใหม่ ]] --
-local FileName = "Sprout_Final_Master_V4.txt"
-local function SaveKey(k) if writefile then writefile(FileName, k) end end
-local function LoadKey() if isfile and isfile(FileName) then return readfile(FileName) end return "" end
+-- [[ 🔑 ฝัง KEY ไว้ที่นี่เลย ไม่ต้องกรอกใหม่ ]] --
+local API_KEY = "AIzaSyAylp7XLFej2Z6zK-qAMMPwiyHVMceGtRE"
 
 -- [[ 🌍 LANGUAGE SYSTEM ]] --
 local Languages = {
     TH = {
         title = "🍓 gemini sprout 🍓",
         placeholder = "คุยกับ Sprout หรือถามอะไรก็ได้...",
-        instruction = "คุณคือ Sprout ผู้ช่วยสตรอว์เบอร์รี ตอบเป็นภาษาไทยกวนๆ น่ารักๆ",
+        instruction = "คุณคือ Sprout ผู้ช่วยสตรอว์เบอร์รี ตอบเป็นภาษาไทยน่ารักๆ",
         hello = "สวัสดีจ้า! Sprout พร้อมคุยเป็นภาษาไทยแล้วนะ!",
-        error = "มึนหัวจัง... (เช็ค API Key หรือตัว 'I' ที่หายไปดูนะ)"
+        error = "มึนหัวจัง... (เช็ค API Key ในโค้ดนะ!)"
     },
     EN = {
         title = "🍓 gemini sprout 🍓",
         placeholder = "Talk to Sprout or ask a question...",
         instruction = "You are Sprout, a cute strawberry assistant. Answer in English.",
         hello = "Hello! I'm Gemini Sprout, your strawberry assistant. Ready to chat!",
-        error = "Sprout gets a headache... (Check your API Key or 'I' letter)"
+        error = "Sprout gets a headache... (Check API Key in Code!)"
     }
 }
 
-local currentLang = "EN" -- ตั้งค่าเริ่มต้นเป็นภาษาอังกฤษ
-local L = Languages[currentLang]
+local L = Languages["EN"] -- เริ่มต้นที่ภาษาอังกฤษ
 
--- [[ 🎨 UI DESIGN: DARK PINK THEME ]] --
+-- [[ 🎨 UI DESIGN ]] --
 local Theme = {
-    BG = Color3.fromRGB(25, 25, 25), -- พื้นหลังเข้ม
-    Main = Color3.fromRGB(255, 120, 180), -- ชมพูหลัก
-    Accent = Color3.fromRGB(255, 20, 147), -- ชมพูเข้ม
+    BG = Color3.fromRGB(25, 25, 25),
+    Main = Color3.fromRGB(255, 120, 180),
+    Accent = Color3.fromRGB(255, 20, 147),
     White = Color3.fromRGB(255, 255, 255),
     Gray = Color3.fromRGB(50, 50, 50)
 }
 
--- [[ 🛠️ UI: SETUP FRAME (หน้ากรอก Key) ]] --
-local Setup = Instance.new("Frame", GeminiGui)
-Setup.Size = UDim2.new(0, 320, 0, 180)
-Setup.Position = UDim2.new(0.5, -160, 0.5, -90)
-Setup.BackgroundColor3 = Theme.BG
-Instance.new("UICorner", Setup).CornerRadius = UDim.new(0, 15)
-Instance.new("UIStroke", Setup, {Color = Theme.Main, Thickness = 2})
-
-local STitle = Instance.new("TextLabel", Setup)
-STitle.Size = UDim2.new(1, 0, 0, 50)
-STitle.Text = "🍓 Sprout Setup V4 🍓"
-STitle.TextColor3 = Theme.Main
-STitle.Font = "GothamBold"
-STitle.TextSize = 20
-STitle.BackgroundTransparency = 1
-
-local SInput = Instance.new("TextBox", Setup)
-SInput.Size = UDim2.new(0, 260, 0, 40)
-SInput.Position = UDim2.new(0, 30, 0, 60)
-SInput.PlaceholderText = "Paste API Key (Start with AIza...)"
-SInput.Text = ""
-SInput.BackgroundColor3 = Theme.Gray
-SInput.TextColor3 = Theme.White
-Instance.new("UICorner", SInput)
-
-local SBtn = Instance.new("TextButton", Setup)
-SBtn.Size = UDim2.new(0, 120, 0, 40)
-SBtn.Position = UDim2.new(0.5, -60, 0, 120)
-SBtn.BackgroundColor3 = Theme.Main
-SBtn.Text = "Start!"
-SBtn.TextColor3 = Theme.White
-SBtn.Font = "GothamBold"
-Instance.new("UICorner", SBtn)
-
--- [[ 💬 MAIN CHAT FRAME ]] --
 local Main = Instance.new("Frame", GeminiGui)
 Main.Size = UDim2.new(0, 360, 0, 480)
 Main.Position = UDim2.new(0.5, -180, 0.5, -240)
 Main.BackgroundColor3 = Theme.BG
-Main.Visible = false
 Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 20)
 Instance.new("UIStroke", Main, {Color = Theme.Main, Thickness = 2})
 
@@ -144,6 +104,7 @@ InBox.Position = UDim2.new(0, 15, 1, -55)
 InBox.PlaceholderText = L.placeholder
 InBox.BackgroundColor3 = Theme.Gray
 InBox.TextColor3 = Theme.White
+InBox.Text = ""
 Instance.new("UICorner", InBox)
 
 local Send = Instance.new("TextButton", Main)
@@ -153,9 +114,7 @@ Send.Text = "🍓"
 Send.BackgroundColor3 = Theme.Accent
 Instance.new("UICorner", Send)
 
--- [[ 🧠 AI LOGIC: FINAL FIX ]] --
-local API_KEY = LoadKey()
-
+-- [[ 🧠 AI LOGIC ]] --
 local function AddMsg(sender, msg)
     local l = Instance.new("TextLabel", Scroll)
     l.Size = UDim2.new(1, 0, 0, 30)
@@ -167,7 +126,6 @@ local function AddMsg(sender, msg)
     l.TextSize = 14
     l.TextWrapped = true
     l.TextXAlignment = (sender == "You" and "Right" or "Left")
-    
     local txtSize = game:GetService("TextService"):GetTextSize(l.Text, l.TextSize, l.Font, Vector2.new(Scroll.AbsoluteSize.X, 1000))
     l.Size = UDim2.new(1, 0, 0, txtSize.Y + 5)
     Scroll.CanvasPosition = Vector2.new(0, 9999)
@@ -181,14 +139,15 @@ local function GetAI(prompt)
     end)
     if success then
         local decoded = HttpService:JSONDecode(response)
-        if decoded.candidates and decoded.candidates[1] then
+        if decoded.candidates and decoded.candidates[1] and decoded.candidates[1].content then
             return decoded.candidates[1].content.parts[1].text
+        elseif decoded.error then
+            return "Google Error: " .. tostring(decoded.error.message)
         end
     end
     return L.error
 end
 
--- [[ 🛠️ ACTIONS ]] --
 BtnTH.MouseButton1Click:Connect(function()
     L = Languages["TH"]
     BtnTH.BackgroundColor3 = Theme.Main
@@ -207,15 +166,6 @@ BtnEN.MouseButton1Click:Connect(function()
     AddMsg("Sprout", L.hello)
 end)
 
-local function Start(k)
-    API_KEY = k:gsub("%s+", "") -- ลบเว้นวรรคออกอัตโนมัติ
-    SaveKey(API_KEY)
-    Setup.Visible = false
-    Main.Visible = true
-    AddMsg("Sprout", L.hello)
-end
-
-SBtn.MouseButton1Click:Connect(function() if SInput.Text ~= "" then Start(SInput.Text) end end)
 Send.MouseButton1Click:Connect(function()
     local t = InBox.Text
     if t ~= "" then
@@ -225,4 +175,4 @@ Send.MouseButton1Click:Connect(function()
     end
 end)
 
-if API_KEY ~= "" then Start(API_KEY) end
+AddMsg("Sprout", L.hello)
