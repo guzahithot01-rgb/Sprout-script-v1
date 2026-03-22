@@ -1,0 +1,277 @@
+-- [[ 🍓 sprout script [ v2.3 - PLAYERS OWNED UPDATE ] 🍓 ]]
+
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local CloseBtn = Instance.new("TextButton")
+local MiniBtn = Instance.new("TextButton")
+local ContentFrame = Instance.new("ScrollingFrame")
+local UIListLayout = Instance.new("UIListLayout")
+
+-- Setup UI
+ScreenGui.Name = "SproutScriptUI"
+ScreenGui.Parent = game:GetService("CoreGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- Main Frame (Pink Style)
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(255, 192, 203)
+MainFrame.BorderSizePixel = 0
+MainFrame.Position = UDim2.new(0.4, 0, 0.3, 0)
+MainFrame.Size = UDim2.new(0, 250, 0, 400)
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+-- Title
+Title.Name = "Title"
+Title.Parent = MainFrame
+Title.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.Font = Enum.Font.FredokaOne
+Title.Text = "sprout script"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 18
+Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
+
+-- Buttons
+CloseBtn.Parent = MainFrame
+CloseBtn.BackgroundTransparency = 1
+CloseBtn.Position = UDim2.new(0.85, 0, 0, 0)
+CloseBtn.Size = UDim2.new(0, 30, 0, 35)
+CloseBtn.Text = "X"
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.Font = Enum.Font.FredokaOne
+
+MiniBtn.Parent = MainFrame
+MiniBtn.BackgroundTransparency = 1
+MiniBtn.Position = UDim2.new(0.7, 0, 0, 0)
+MiniBtn.Size = UDim2.new(0, 30, 0, 35)
+MiniBtn.Text = "-"
+MiniBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MiniBtn.Font = Enum.Font.FredokaOne
+
+-- Scrolling Content
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Parent = MainFrame
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.Position = UDim2.new(0, 5, 0, 45)
+ContentFrame.Size = UDim2.new(1, -10, 1, -55)
+ContentFrame.CanvasSize = UDim2.new(0, 0, 0, 1750) -- เพิ่มพื้นที่สำหรับปุ่มใหม่
+ContentFrame.ScrollBarThickness = 3
+UIListLayout.Parent = ContentFrame
+UIListLayout.Padding = UDim.new(0, 8)
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+-- [[ 💨 Speed System ]]
+local currentSpeedValue = 50
+local isSpeedEnabled = false
+local SliderFrame = Instance.new("Frame")
+SliderFrame.Size = UDim2.new(0.9, 0, 0, 45)
+SliderFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+SliderFrame.Parent = ContentFrame
+Instance.new("UICorner", SliderFrame).CornerRadius = UDim.new(0, 8)
+
+local SliderLabel = Instance.new("TextLabel")
+SliderLabel.Size = UDim2.new(1, 0, 0, 20)
+SliderLabel.BackgroundTransparency = 1
+SliderLabel.Text = "Speed: " .. currentSpeedValue
+SliderLabel.TextColor3 = Color3.fromRGB(255, 20, 147)
+SliderLabel.Font = Enum.Font.SourceSansBold
+SliderLabel.Parent = SliderFrame
+
+local Bar = Instance.new("Frame")
+Bar.Size = UDim2.new(0.8, 0, 0, 4)
+Bar.Position = UDim2.new(0.1, 0, 0.7, 0)
+Bar.BackgroundColor3 = Color3.fromRGB(255, 192, 203)
+Bar.Parent = SliderFrame
+
+local Dot = Instance.new("TextButton")
+Dot.Size = UDim2.new(0, 14, 0, 14)
+Dot.Position = UDim2.new(0.25, -7, -1.2, 0)
+Dot.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+Dot.Text = ""
+Dot.Parent = Bar
+Instance.new("UICorner", Dot).CornerRadius = UDim.new(1, 0)
+
+local SpeedToggle = Instance.new("Frame")
+SpeedToggle.Size = UDim2.new(0, 50, 0, 50)
+SpeedToggle.Position = UDim2.new(0, 10, 0.5, 0)
+SpeedToggle.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+SpeedToggle.Visible = false
+SpeedToggle.Draggable = true
+SpeedToggle.Active = true
+SpeedToggle.Parent = ScreenGui
+Instance.new("UICorner", SpeedToggle).CornerRadius = UDim.new(1, 0)
+
+local SBtn = Instance.new("TextButton")
+SBtn.Size = UDim2.new(1, 0, 1, 0)
+SBtn.BackgroundTransparency = 1
+SBtn.Text = "💨"
+SBtn.TextSize = 25
+SBtn.Parent = SpeedToggle
+
+SBtn.MouseButton1Click:Connect(function()
+    isSpeedEnabled = not isSpeedEnabled
+    SpeedToggle.BackgroundColor3 = isSpeedEnabled and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(255, 105, 180)
+    if not isSpeedEnabled then pcall(function() game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16 end) end
+end)
+
+local dragging = false
+Dot.MouseButton1Down:Connect(function() dragging = true end)
+game:GetService("UserInputService").InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then dragging = false end end)
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    if dragging then
+        local mousePos = game:GetService("UserInputService"):GetMouseLocation().X
+        local relative = math.clamp((mousePos - Bar.AbsolutePosition.X) / Bar.AbsoluteSize.X, 0, 1)
+        Dot.Position = UDim2.new(relative, -7, -1.2, 0)
+        currentSpeedValue = math.floor(relative * 200)
+        SliderLabel.Text = "Speed: " .. currentSpeedValue
+    end
+    pcall(function() if isSpeedEnabled then game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = currentSpeedValue end end)
+end)
+
+-- [[ Feature Function ]]
+local function CreateFeature(name, tutorialText, callback)
+    local Container = Instance.new("Frame")
+    Container.Size = UDim2.new(1, 0, 0, 35)
+    Container.BackgroundTransparency = 1
+    Container.Parent = ContentFrame
+
+    local MainBtn = Instance.new("TextButton")
+    MainBtn.Size = UDim2.new(0.85, 0, 0, 35)
+    MainBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    MainBtn.Text = name
+    MainBtn.TextColor3 = Color3.fromRGB(255, 20, 147)
+    MainBtn.Font = Enum.Font.SourceSansBold
+    MainBtn.Parent = Container
+    Instance.new("UICorner", MainBtn).CornerRadius = UDim.new(0, 8)
+
+    local InfoBtn = Instance.new("TextButton")
+    InfoBtn.Size = UDim2.new(0.12, 0, 0, 35)
+    InfoBtn.Position = UDim2.new(0.88, 0, 0, 0)
+    InfoBtn.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+    InfoBtn.Text = "▼"
+    InfoBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    InfoBtn.Parent = Container
+    Instance.new("UICorner", InfoBtn).CornerRadius = UDim.new(0, 8)
+
+    local DescFrame = Instance.new("Frame")
+    DescFrame.Size = UDim2.new(1, 0, 0, 0)
+    DescFrame.BackgroundColor3 = Color3.fromRGB(255, 240, 245)
+    DescFrame.ClipsDescendants = true
+    DescFrame.Parent = ContentFrame
+    Instance.new("UICorner", DescFrame).CornerRadius = UDim.new(0, 5)
+
+    local DescText = Instance.new("TextLabel")
+    DescText.Size = UDim2.new(1, -14, 1, -10)
+    DescText.Position = UDim2.new(0, 7, 0, 5)
+    DescText.BackgroundTransparency = 1
+    DescText.Text = tutorialText
+    DescText.TextColor3 = Color3.fromRGB(150, 50, 100)
+    DescText.TextWrapped = true
+    DescText.Font = Enum.Font.SourceSansItalic
+    DescText.TextSize = 13
+    DescText.TextXAlignment = Enum.TextXAlignment.Left
+    DescText.Parent = DescFrame
+
+    local isOpen = false
+    InfoBtn.MouseButton1Click:Connect(function()
+        isOpen = not isOpen
+        DescFrame:TweenSize(isOpen and UDim2.new(1, 0, 0, 85) or UDim2.new(1, 0, 0, 0), "Out", "Quint", 0.3, true)
+        InfoBtn.Text = isOpen and "▲" or "▼"
+    end)
+    MainBtn.MouseButton1Click:Connect(callback)
+end
+
+-- [[ NEW: PLAYERS OWNED ]]
+CreateFeature("Players owned", "How to use 'Players owned':\nClick it, and you need to type name players that you want to see they owned", function()
+    loadstring(game:HttpGet("https://pastefy.app/38WCJE5R/raw"))()
+end)
+
+-- [[ SPROUT SCRIPT SCAN ]]
+CreateFeature("sprout script scan", "How to use 'sprout script scan':\nClick it, You can see username others people in game", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/guzahithot01-rgb/Sprout-script-v1/refs/heads/Scan.lua/Main.lua"))()
+end)
+
+-- [[ OTHER FEATURES ]]
+CreateFeature("Anti-TwistedSquirmGarb", "Anti struggle automatic when grabbed", function()
+    local function tap(dir) game.ReplicatedStorage.Events.TwistedSquirmGrab:FireServer(unpack({"Struggle", dir})) end
+    local ui = game.Players.LocalPlayer.PlayerGui:FindFirstChild("TwistedSquirmEscapeUI")
+    if ui then
+        ui.Changed:Connect(function()
+            if ui.Enabled then
+                task.spawn(function()
+                    while ui.Enabled do tap("left") task.wait(0.05) tap("right") task.wait(0.05) end
+                end)
+            end
+        end)
+    end
+end)
+
+CreateFeature("egg hunt esp", "Show egg locations in lobby", function()
+    local Workspace = game:GetService("Workspace")
+    local CoreGui = game:GetService("CoreGui")
+    if CoreGui:FindFirstChild("SproutEggESP") then CoreGui.SproutEggESP:Destroy() end
+    local folder = Instance.new("Folder", CoreGui)
+    folder.Name = "SproutEggESP"
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v.Name:lower():find("egg") and (v:IsA("BasePart") or v:IsA("Model")) then
+            local isPickable = v:FindFirstChildWhichIsA("TouchTransmitter", true) or v:FindFirstChildWhichIsA("ClickDetector", true)
+            if isPickable and not v:IsDescendantOf(game.Players) then
+                local hl = Instance.new("Highlight", folder)
+                hl.FillColor = Color3.fromRGB(255, 105, 180)
+                hl.Adornee = v
+                local bbg = Instance.new("BillboardGui", folder)
+                bbg.Size, bbg.AlwaysOnTop, bbg.Adornee = UDim2.new(0,100,0,50), true, v
+                local l = Instance.new("TextLabel", bbg)
+                l.Size, l.BackgroundTransparency, l.Text, l.TextColor3, l.TextSize = UDim2.new(1,0,1,0), 1, "EGG HERE! 🍓", Color3.new(1,1,1), 14
+            end
+        end
+    end
+end)
+
+CreateFeature("speed", "Floating button to toggle speed", function() SpeedToggle.Visible = not SpeedToggle.Visible end)
+
+CreateFeature("Tp to generator", "Teleport to nearest generator", function()
+    pcall(function()
+        local hrp = game.Players.LocalPlayer.Character.HumanoidRootPart
+        for _, v in pairs(workspace.CurrentRoom:GetDescendants()) do
+            if v.Name == "Generator" and v:IsA("Model") then
+                local target = v.PrimaryPart or v:FindFirstChildWhichIsA("BasePart")
+                if target then hrp.CFrame = target.CFrame + Vector3.new(0, 5, 0) break end
+            end
+        end
+    end)
+end)
+
+CreateFeature("Noob killer", "Twisted Noob script", function() loadstring(game:HttpGet("https://rawscripts.net/raw/Dandy's-World-ALPHA-Twisted-Noob-127837"))() end)
+CreateFeature("gobbydwscript", "G0bbyD0llan script", function() loadstring(game:HttpGet("https://rawscripts.net/raw/Dandy's-World-ALPHA-G0bbyD0llan-DW-Reupload-34146"))() end)
+CreateFeature("angel script", "Angel Core script", function() loadstring(game:HttpGet("https://rawscripts.net/raw/Dandy's-World-ALPHA-Angel-Core-115426"))() end)
+CreateFeature("boxten s#x gui", "Boxten script", function() loadstring(game:HttpGet("https://rawscripts.net/raw/Dandy's-World-ALPHA-Dandys-World-50352"))() end)
+
+-- UI logic
+local ResizeBtn = Instance.new("TextButton", MainFrame)
+ResizeBtn.Size, ResizeBtn.Position, ResizeBtn.Text = UDim2.new(0,20,0,20), UDim2.new(1,-20,1,-20), "◢"
+Instance.new("UICorner", ResizeBtn)
+
+local resizing = false
+ResizeBtn.MouseButton1Down:Connect(function() resizing = true end)
+game:GetService("UserInputService").InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then resizing = false end end)
+game:GetService("RunService").RenderStepped:Connect(function()
+    if resizing then
+        local mPos = game:GetService("UserInputService"):GetMouseLocation()
+        MainFrame.Size = UDim2.new(0, math.clamp(mPos.X - MainFrame.AbsolutePosition.X, 180, 600), 0, math.clamp(mPos.Y - MainFrame.AbsolutePosition.Y, 150, 800))
+    end
+end)
+
+local minimized = false
+MiniBtn.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    ContentFrame.Visible, ResizeBtn.Visible = not minimized, not minimized
+    MainFrame:TweenSize(minimized and UDim2.new(0, 250, 0, 35) or UDim2.new(0, 250, 0, 400), "Out", "Quint", 0.3, true)
+    MiniBtn.Text = minimized and "+" or "-"
+end)
+CloseBtn.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
