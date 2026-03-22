@@ -1,7 +1,6 @@
--- [[ 🍓 GEMINI SPROUT V4: NO-KEY EDITION 🍓 ]] --
+-- [[ 🍓 GEMINI SPROUT V4.2: DEBUG EDITION 🍓 ]] --
 local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
-local TweenService = game:GetService("TweenService")
 
 if CoreGui:FindFirstChild("GeminiSproutV4") then CoreGui.GeminiSproutV4:Destroy() end
 
@@ -9,28 +8,27 @@ local GeminiGui = Instance.new("ScreenGui", CoreGui)
 GeminiGui.Name = "GeminiSproutV4"
 GeminiGui.ResetOnSpawn = false
 
--- [[ 🔑 ฝัง KEY ไว้ที่นี่เลย ไม่ต้องกรอกใหม่ ]] --
+-- [[ 🔑 ฝัง KEY ตัวล่าสุดของคุณ ]] --
 local API_KEY = "AIzaSyAylp7XLFej2Z6zK-qAMMPwiyHVMceGtRE"
 
--- [[ 🌍 LANGUAGE SYSTEM ]] --
 local Languages = {
     TH = {
         title = "🍓 gemini sprout 🍓",
         placeholder = "คุยกับ Sprout หรือถามอะไรก็ได้...",
         instruction = "คุณคือ Sprout ผู้ช่วยสตรอว์เบอร์รี ตอบเป็นภาษาไทยน่ารักๆ",
         hello = "สวัสดีจ้า! Sprout พร้อมคุยเป็นภาษาไทยแล้วนะ!",
-        error = "มึนหัวจัง... (เช็ค API Key ในโค้ดนะ!)"
+        error = "มึนหัวจัง... (เช็ค Error ด้านล่างนะ)"
     },
     EN = {
         title = "🍓 gemini sprout 🍓",
         placeholder = "Talk to Sprout or ask a question...",
         instruction = "You are Sprout, a cute strawberry assistant. Answer in English.",
         hello = "Hello! I'm Gemini Sprout, your strawberry assistant. Ready to chat!",
-        error = "Sprout gets a headache... (Check API Key in Code!)"
+        error = "Sprout gets a headache... (Check Error below)"
     }
 }
 
-local L = Languages["EN"] -- เริ่มต้นที่ภาษาอังกฤษ
+local L = Languages["EN"]
 
 -- [[ 🎨 UI DESIGN ]] --
 local Theme = {
@@ -48,7 +46,6 @@ Main.BackgroundColor3 = Theme.BG
 Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 20)
 Instance.new("UIStroke", Main, {Color = Theme.Main, Thickness = 2})
 
--- Bar ด้านบน
 local Bar = Instance.new("Frame", Main)
 Bar.Size = UDim2.new(1, 0, 0, 50)
 Bar.BackgroundTransparency = 1
@@ -63,7 +60,6 @@ BTitle.TextSize = 18
 BTitle.TextXAlignment = "Left"
 BTitle.BackgroundTransparency = 1
 
--- [[ 🌐 BUTTONS: THAILAND & ENGLISH ]] --
 local LangContainer = Instance.new("Frame", Main)
 LangContainer.Size = UDim2.new(1, -20, 0, 45)
 LangContainer.Position = UDim2.new(0, 10, 0, 55)
@@ -75,7 +71,6 @@ BtnTH.BackgroundColor3 = Theme.Gray
 BtnTH.Text = "Thailand"
 BtnTH.TextColor3 = Theme.White
 BtnTH.Font = "GothamBold"
-BtnTH.TextSize = 16
 Instance.new("UICorner", BtnTH)
 
 local BtnEN = Instance.new("TextButton", LangContainer)
@@ -85,10 +80,8 @@ BtnEN.BackgroundColor3 = Theme.Main
 BtnEN.Text = "English"
 BtnEN.TextColor3 = Theme.White
 BtnEN.Font = "GothamBold"
-BtnEN.TextSize = 16
 Instance.new("UICorner", BtnEN)
 
--- พื้นที่แชท
 local Scroll = Instance.new("ScrollingFrame", Main)
 Scroll.Size = UDim2.new(1, -20, 1, -180)
 Scroll.Position = UDim2.new(0, 10, 0, 110)
@@ -97,7 +90,6 @@ Scroll.BorderSizePixel = 0
 Scroll.CanvasSize = UDim2.new(0,0,0,0)
 Instance.new("UIListLayout", Scroll).Padding = UDim.new(0,10)
 
--- ช่องพิมพ์และปุ่มส่ง
 local InBox = Instance.new("TextBox", Main)
 InBox.Size = UDim2.new(1, -70, 0, 40)
 InBox.Position = UDim2.new(0, 15, 1, -55)
@@ -114,7 +106,7 @@ Send.Text = "🍓"
 Send.BackgroundColor3 = Theme.Accent
 Instance.new("UICorner", Send)
 
--- [[ 🧠 AI LOGIC ]] --
+-- [[ 🧠 AI LOGIC: DEBUG MODE ]] --
 local function AddMsg(sender, msg)
     local l = Instance.new("TextLabel", Scroll)
     l.Size = UDim2.new(1, 0, 0, 30)
@@ -134,18 +126,21 @@ end
 local function GetAI(prompt)
     local url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" .. API_KEY
     local data = { contents = {{ parts = {{ text = L.instruction .. "\n" .. prompt }} }} }
+    
     local success, response = pcall(function()
         return HttpService:PostAsync(url, HttpService:JSONEncode(data), Enum.HttpContentType.ApplicationJson)
     end)
+    
     if success then
         local decoded = HttpService:JSONDecode(response)
         if decoded.candidates and decoded.candidates[1] and decoded.candidates[1].content then
             return decoded.candidates[1].content.parts[1].text
         elseif decoded.error then
+            -- 🍓 ถ้ามึนหัว มันจะบอกสาเหตุจริงๆ มาตรงนี้!
             return "Google Error: " .. tostring(decoded.error.message)
         end
     end
-    return L.error
+    return "Network Error: Google Blocked this request (Check VPN/Internet)"
 end
 
 BtnTH.MouseButton1Click:Connect(function()
