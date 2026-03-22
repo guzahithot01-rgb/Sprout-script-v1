@@ -1,16 +1,17 @@
--- [[ 🍓 GEMINI SPROUT V4: MASTER EDITION 🍓 ]] --
+-- [[ 🍓 GEMINI SPROUT V4: THE FINAL MASTER 🍓 ]] --
 local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 
+-- ลบของเก่าออกก่อนรันใหม่
 if CoreGui:FindFirstChild("GeminiSproutV4") then CoreGui.GeminiSproutV4:Destroy() end
 
 local GeminiGui = Instance.new("ScreenGui", CoreGui)
 GeminiGui.Name = "GeminiSproutV4"
 GeminiGui.ResetOnSpawn = false
 
--- [[ 💾 LOCAL STORAGE (V4) ]] --
-local FileName = "Sprout_Master_V4.txt"
+-- [[ 💾 LOCAL STORAGE: บังคับให้ถาม Key ใหม่ ]] --
+local FileName = "Sprout_Final_Master_V4.txt"
 local function SaveKey(k) if writefile then writefile(FileName, k) end end
 local function LoadKey() if isfile and isfile(FileName) then return readfile(FileName) end return "" end
 
@@ -21,29 +22,30 @@ local Languages = {
         placeholder = "คุยกับ Sprout หรือถามอะไรก็ได้...",
         instruction = "คุณคือ Sprout ผู้ช่วยสตรอว์เบอร์รี ตอบเป็นภาษาไทยกวนๆ น่ารักๆ",
         hello = "สวัสดีจ้า! Sprout พร้อมคุยเป็นภาษาไทยแล้วนะ!",
-        error = "มึนหัวจัง... (เช็ค API Key หรือเน็ตดูนะ)"
+        error = "มึนหัวจัง... (เช็ค API Key หรือตัว 'I' ที่หายไปดูนะ)"
     },
     EN = {
         title = "🍓 gemini sprout 🍓",
         placeholder = "Talk to Sprout or ask a question...",
         instruction = "You are Sprout, a cute strawberry assistant. Answer in English.",
         hello = "Hello! I'm Gemini Sprout, your strawberry assistant. Ready to chat!",
-        error = "Sprout gets a headache... (Check API Key or Internet)"
+        error = "Sprout gets a headache... (Check your API Key or 'I' letter)"
     }
 }
 
-local L = Languages["EN"] -- เริ่มต้นที่ภาษาอังกฤษ
+local currentLang = "EN" -- ตั้งค่าเริ่มต้นเป็นภาษาอังกฤษ
+local L = Languages[currentLang]
 
--- [[ 🎨 UI DESIGN ]] --
+-- [[ 🎨 UI DESIGN: DARK PINK THEME ]] --
 local Theme = {
-    BG = Color3.fromRGB(30, 30, 30), -- สีเข้มแบบในรูป
-    Main = Color3.fromRGB(255, 120, 180),
-    Accent = Color3.fromRGB(255, 20, 147),
+    BG = Color3.fromRGB(25, 25, 25), -- พื้นหลังเข้ม
+    Main = Color3.fromRGB(255, 120, 180), -- ชมพูหลัก
+    Accent = Color3.fromRGB(255, 20, 147), -- ชมพูเข้ม
     White = Color3.fromRGB(255, 255, 255),
-    Gray = Color3.fromRGB(60, 60, 60)
+    Gray = Color3.fromRGB(50, 50, 50)
 }
 
--- [[ 🛠️ SETUP FRAME (หน้ากรอก Key) ]] --
+-- [[ 🛠️ UI: SETUP FRAME (หน้ากรอก Key) ]] --
 local Setup = Instance.new("Frame", GeminiGui)
 Setup.Size = UDim2.new(0, 320, 0, 180)
 Setup.Position = UDim2.new(0.5, -160, 0.5, -90)
@@ -86,7 +88,7 @@ Main.Visible = false
 Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 20)
 Instance.new("UIStroke", Main, {Color = Theme.Main, Thickness = 2})
 
--- แถบหัวข้อ (Bar)
+-- Bar ด้านบน
 local Bar = Instance.new("Frame", Main)
 Bar.Size = UDim2.new(1, 0, 0, 50)
 Bar.BackgroundTransparency = 1
@@ -119,7 +121,7 @@ Instance.new("UICorner", BtnTH)
 local BtnEN = Instance.new("TextButton", LangContainer)
 BtnEN.Size = UDim2.new(0.48, 0, 1, 0)
 BtnEN.Position = UDim2.new(0.52, 0, 0, 0)
-BtnEN.BackgroundColor3 = Theme.Main -- เริ่มต้นเป็นอังกฤษเลยเด่นกว่า
+BtnEN.BackgroundColor3 = Theme.Main
 BtnEN.Text = "English"
 BtnEN.TextColor3 = Theme.White
 BtnEN.Font = "GothamBold"
@@ -135,7 +137,7 @@ Scroll.BorderSizePixel = 0
 Scroll.CanvasSize = UDim2.new(0,0,0,0)
 Instance.new("UIListLayout", Scroll).Padding = UDim.new(0,10)
 
--- ช่องพิมพ์
+-- ช่องพิมพ์และปุ่มส่ง
 local InBox = Instance.new("TextBox", Main)
 InBox.Size = UDim2.new(1, -70, 0, 40)
 InBox.Position = UDim2.new(0, 15, 1, -55)
@@ -151,7 +153,7 @@ Send.Text = "🍓"
 Send.BackgroundColor3 = Theme.Accent
 Instance.new("UICorner", Send)
 
--- [[ 🧠 AI LOGIC ]] --
+-- [[ 🧠 AI LOGIC: FINAL FIX ]] --
 local API_KEY = LoadKey()
 
 local function AddMsg(sender, msg)
@@ -206,7 +208,7 @@ BtnEN.MouseButton1Click:Connect(function()
 end)
 
 local function Start(k)
-    API_KEY = k:gsub("%s+", "") -- ลบช่องว่างออก
+    API_KEY = k:gsub("%s+", "") -- ลบเว้นวรรคออกอัตโนมัติ
     SaveKey(API_KEY)
     Setup.Visible = false
     Main.Visible = true
